@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 全规则服务器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 60px;
+            width: 500px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(78, 205, 196, 0.2);
+        }
+
+        .login-box h1 {
+            text-align: center;
+            color: #4ecdc4;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #aaa;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-login {
+            background: #4ecdc4;
+            color: #1a1a2e;
+        }
+
+        .btn-login:hover {
+            background: #44a08d;
+        }
+
+        .btn-register {
+            background: transparent;
+            color: #4ecdc4;
+            border: 2px solid #4ecdc4;
+        }
+
+        .btn-register:hover {
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .btn-back {
+            background: #666;
+            color: #fff;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #aaa;
+        }
+
+        .tab.active {
+            background: #4ecdc4;
+            color: #1a1a2e;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>⛏️ 全规则服务器</h1>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('login')">登录</div>
+            <div class="tab" onclick="switchTab('register')">注册</div>
+        </div>
+        
+        <div class="input-group">
+            <label>游戏名称</label>
+            <input type="text" id="playerName" placeholder="输入你的游戏名称">
+        </div>
+        
+        <div class="input-group">
+            <label>密码</label>
+            <input type="password" id="playerPassword" placeholder="输入密码">
+        </div>
+
+        <button class="btn btn-login" onclick="doLogin()">登录</button>
+        <button class="btn btn-register" onclick="doRegister()">注册</button>
+        <button class="btn btn-back" onclick="window.location.href='/'">返回首页</button>
+    </div>
+
+    <script>
+        let currentTab = 'login';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        async function doLogin() {
+            const name = document.getElementById('playerName').value;
+            const password = document.getElementById('playerPassword').value;
+            
+            if (!name || !password) {
+                alert('请输入游戏名称和密码');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name: name, password: password})
+                });
+                const data = await response.json();
+                alert(data.message);
+                if (data.success) {
+                    window.location.href = '/';
+                }
+            } catch (e) {
+                alert('登录失败，请确保后端服务器已启动');
+            }
+        }
+
+        async function doRegister() {
+            const name = document.getElementById('playerName').value;
+            const password = document.getElementById('playerPassword').value;
+            
+            if (!name || !password) {
+                alert('请输入游戏名称和密码');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name: name, password: password})
+                });
+                const data = await response.json();
+                alert(data.message);
+                if (data.success) {
+                    window.location.href = '/';
+                }
+            } catch (e) {
+                alert('注册失败，请确保后端服务器已启动');
+            }
+        }
+    </script>
+</body>
+</html>
